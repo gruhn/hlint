@@ -9,15 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       upload_url: ${{ steps.create-release.outputs.upload_url }}
-      filename: ${{ steps.username_repo.outputs._1 }}-${{ steps.reftags_version.outputs._1 }}
+      filename: hlint-${{ steps.reftags_version.outputs._1 }}
 
     steps:
-    - uses: rishabhgupta/split-by@v1
-      id: username_repo
-      with:
-        string: ${{ github.repository }} # e.g. ndmitchell/neil
-        split-by: '/'
-
     - uses: rishabhgupta/split-by@v1
       id: reftags_version
       with:
@@ -32,8 +26,6 @@ jobs:
         tag_name: v${{ steps.reftags_version.outputs._1 }}
         release_name: v${{ steps.reftags_version.outputs._1 }}
 
-
-
   build:
     needs: init
     runs-on: ${{ matrix.os }}
@@ -42,7 +34,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - os: ubuntu-18.04
+        - os: ubuntu-20.04
           SUFFIX: x86_64-linux.tar.gz
         - os: macOS-latest
           SUFFIX: x86_64-osx.tar.gz
@@ -52,10 +44,9 @@ jobs:
     steps:
     - run: git config --global core.autocrlf false
     - uses: actions/checkout@v2
-    - uses: haskell/actions/setup@v1
+    - uses: haskell/actions/setup@v2
       with:
-        # Force a version that works with Mac
-        ghc-version: '9.2.3'
+        ghc-version: '9.6'
     - uses: ndmitchell/neil@master
       with:
         make-release: true
@@ -71,11 +62,11 @@ jobs:
         asset_content_type: application/zip
 
     - uses: actions/upload-release-asset@v1
-      if: matrix.os == 'ubuntu-18.04'
+      if: matrix.os == 'ubuntu-20.04'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.init.outputs.upload_url }}
-        asset_path: dist/${{ needs.init.outputs.filename }}.tar.gz
+        asset_path: dist-newstyle/sdist/${{ needs.init.outputs.filename }}.tar.gz
         asset_name: ${{ needs.init.outputs.filename }}.tar.gz
         asset_content_type: application/zip

@@ -1,7 +1,7 @@
 cabal-version:      1.18
 build-type:         Simple
 name:               hlint
-version:            3.5
+version:            3.6.1
 license:            BSD3
 license-file:       LICENSE
 category:           Development
@@ -36,7 +36,7 @@ extra-source-files:
 extra-doc-files:
     README.md
     CHANGES.txt
-tested-with:        GHC==9.4, GHC==9.2
+tested-with:        GHC==9.6, GHC==9.4, GHC==9.2
 
 source-repository head
     type:     git

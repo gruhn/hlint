@@ -1,4 +1,4 @@
-{-# LANGUAGE ImportQualifiedPost #-}
+{-# LANGUAGE ImportQualifiedPost, CPP #-}
 {-# LANGUAGE PatternGuards, DeriveDataTypeable, TupleSections #-}
 {-# OPTIONS_GHC -Wno-missing-fields -fno-cse -O0 #-}
 
@@ -224,7 +224,7 @@ cmdCpp cmd
         {boolopts=defaultBoolOptions{hashline=False, stripC89=True, ansi=cmdCppAnsi cmd}
         ,includes = cmdCppInclude cmd
         ,preInclude = cmdCppFile cmd
-        ,defines = ("__HLINT__","1") : [(a,drop1 b) | x <- cmdCppDefine cmd, let (a,b) = break (== '=') x]
+        ,defines = ("__HLINT__","1") : [(a,drop1 b) | x <- cmdCppDefine cmd, let (a,b) = break (== '=') x] ++ [("__GLASGOW_HASKELL__", show (__GLASGOW_HASKELL__ :: Int))]
         }
 
 
@@ -233,7 +233,7 @@ cmdUseColour :: Cmd -> IO Bool
 cmdUseColour cmd = do
   -- https://no-color.org
   -- if NO_COLOR is set, regardless of value, we do not colour output.
-  noColor <- lookupEnv "NO_COLOR" 
+  noColor <- lookupEnv "NO_COLOR"
   case cmdColor cmd of
     Always -> pure True
     Never  -> pure False
